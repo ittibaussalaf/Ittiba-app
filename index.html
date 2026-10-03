@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ittiba'us Salaf - Hafalan Al-Quran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7ec;--card:#ffffff;--tx:#23352f;--mut:#71847c;--pri:#14876b;--pri2:#0d6a54;--soft:#e2f3ec;--gold:#f2b134;--gold2:#fff3d1;--bd:#ece6d3;--sh:0 6px 18px rgba(20,90,70,.10)}
+@media (prefers-color-scheme:dark){:root{--bg:#10201b;--card:#182a24;--tx:#eaf4ef;--mut:#9bb3a9;--pri:#3fc39b;--pri2:#2ea884;--soft:#1f3a31;--gold:#f5c04e;--gold2:#3a3220;--bd:#27403a;--sh:0 6px 18px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:360px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0d6a54,#1fa583 60%,#4cc9a0);color:#fff;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 56px;border-radius:0 0 34px 34px}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero:before{width:190px;height:190px;right:-50px;top:-60px}
+.hero:after{width:120px;height:120px;left:-40px;bottom:-50px}
+.hi{max-width:760px;margin:0 auto;position:relative;z-index:1}
+.ar{font-family:"Amiri","Scheherazade New",serif}
+.hero .ar{font-size:1.9rem;line-height:1.3;color:var(--gold2)}
+h1{margin:2px 0 4px;font-size:1.55rem;font-weight:800}
+.hero p{margin:0;opacity:.92;font-size:.95rem}
+.star{position:absolute;right:20px;top:calc(18px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:22px;padding:6px 12px;font-weight:800;z-index:2;font-size:.95rem}
+.star b{color:var(--gold);font-size:1.1rem}
+main{max-width:760px;margin:-32px auto 0;padding:0 16px;position:relative;z-index:2}
+.card{background:var(--card);border-radius:22px;padding:14px;box-shadow:var(--sh);margin-bottom:14px;border:1px solid var(--bd)}
+.lb{font-size:.78rem;font-weight:800;color:var(--mut);margin-bottom:8px;letter-spacing:.02em}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:2px solid var(--soft);background:var(--soft);color:var(--pri2);font:800 1rem "Nunito",sans-serif}
+.chips button.on{background:var(--pri);border-color:var(--pri);color:#fff;transform:scale(1.08);box-shadow:0 4px 10px rgba(20,135,107,.35)}
+.jt{font-weight:800;font-size:1.05rem;margin-top:4px}
+select,input[type=number]{width:100%;padding:11px 12px;border-radius:14px;border:2px solid var(--soft);background:var(--bg);color:var(--tx);font:600 .98rem "Nunito",sans-serif}
+select:focus,input:focus{outline:none;border-color:var(--pri)}
+.sw{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:600;font-size:.9rem}
+.sw input{appearance:none;-webkit-appearance:none;width:46px;height:26px;background:var(--bd);border-radius:20px;position:relative;flex:0 0 auto;transition:.2s}
+.sw input:before{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.sw input:checked{background:var(--pri)}
+.sw input:checked:before{left:23px}
+#msg{color:var(--mut);font-size:.9rem;font-weight:600;padding:2px 6px 10px}
+.sur{margin:18px 4px 8px;font-weight:800;color:var(--pri2);font-size:1rem;display:flex;align-items:center;gap:8px}
+.sur:before{content:"\2726";color:var(--gold)}
+.ay{background:var(--card);border:2px solid var(--bd);border-radius:20px;padding:12px 14px;margin:10px 0;cursor:pointer;box-shadow:var(--sh);transition:.15s}
+.ay.inr{border-color:var(--soft);background:linear-gradient(180deg,var(--card),var(--soft))}
+.ay.cur{border-color:var(--pri);background:var(--soft);transform:scale(1.01)}
+.no{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--mut);font-weight:800}
+.no i{font-style:normal;background:var(--gold);color:#5b3d00;min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.85rem}
+.tx{font-family:"Amiri","Scheherazade New","Traditional Arabic",serif;font-size:1.85rem;line-height:2.15;direction:rtl;text-align:right;margin-top:4px}
+.hide .tx{filter:blur(9px);transition:filter .25s}
+.hide .ay.show .tx{filter:none}
+#bar{position:fixed;z-index:5;left:0;right:0;bottom:0;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
+#bar .in{pointer-events:auto;max-width:760px;margin:0 auto;background:var(--card);border-radius:26px;padding:12px 14px;box-shadow:0 -6px 30px rgba(10,60,45,.22);border:1px solid var(--bd)}
+#now{font-size:.85rem;font-weight:800;color:var(--pri2);margin-bottom:8px;text-align:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g2 label,.g3 label{font-size:.72rem;font-weight:800;color:var(--mut);display:block;margin-bottom:3px}
+details{margin:8px 0}
+summary{font-size:.82rem;font-weight:800;color:var(--pri2);cursor:pointer;list-style:none;text-align:center}
+summary::-webkit-details-marker{display:none}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.btns{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:8px}
+.btns button{border:none;cursor:pointer;font-family:"Nunito",sans-serif}
+.sm{width:52px;height:52px;border-radius:50%;background:var(--soft);color:var(--pri2);font-size:1.05rem;font-weight:800}
+.p{flex:1;max-width:220px;height:58px;border-radius:30px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;font-size:1.1rem;font-weight:800;box-shadow:0 6px 14px rgba(20,135,107,.4)}
+.p:active,.sm:active{transform:scale(.96)}
+.offl{margin-top:12px}
+.dl{width:100%;border-radius:16px;padding:12px;background:var(--gold2);color:var(--tx);border:2px solid var(--gold);font:800 .95rem "Nunito",sans-serif;cursor:pointer}
+.dl:disabled{opacity:.6}
+.pg{display:none;height:8px;background:var(--soft);border-radius:6px;overflow:hidden;margin-top:8px}
+.pg i{display:block;height:100%;width:0;background:var(--pri);transition:width .2s}
+.dls{font-size:.78rem;color:var(--mut);font-weight:600;margin-top:6px}
+input[type=text]{width:100%;padding:11px 12px;border-radius:14px;border:2px solid var(--soft);background:var(--bg);color:var(--tx);font:600 .98rem "Nunito",sans-serif}
+.tb{display:flex;gap:8px;margin-bottom:12px}
+.tb button{flex:1;border:none;border-radius:16px;padding:11px;background:var(--card);color:var(--pri2);font:800 .95rem "Nunito",sans-serif;box-shadow:var(--sh)}
+.tb button.on{background:var(--pri);color:#fff}
+.acts{display:flex;gap:8px;margin-top:8px}
+.acts button{flex:1;border-radius:14px;padding:9px 6px;font:800 .82rem "Nunito",sans-serif;cursor:pointer;border:2px solid transparent}
+.b1{background:var(--gold2);color:var(--tx);border-color:var(--gold)!important}
+.b2{background:var(--soft);color:var(--pri2)}
+.b2.rc{background:#e5484d;color:#fff}
+.got{color:var(--gold);font-weight:800}
+.ri{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:12px;margin-bottom:10px;box-shadow:var(--sh)}
+.ri audio{width:100%;margin:8px 0}
+.bd{display:inline-block;border-radius:12px;padding:3px 9px;font-size:.75rem;font-weight:800;margin:2px 4px 2px 0}
+.bd.ok{background:var(--soft);color:var(--pri2)}.bd.no2{background:#fde3e3;color:#b3262b}.bd.nt{background:var(--gold2);color:#7a5400}
+.tn{margin-top:8px}
+textarea{width:100%;border:2px solid var(--soft);border-radius:12px;padding:8px;background:var(--bg);color:var(--tx);font:600 .9rem "Nunito",sans-serif}
+.pop{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.35);z-index:10}
+#pop{z-index:20}
+.pop.on{display:grid}
+.pop div{background:var(--card);border-radius:28px;padding:26px 30px;text-align:center;max-width:300px;box-shadow:var(--sh)}
+.pop .big{font-size:3rem;color:var(--gold);line-height:1}
+.pop h2{margin:8px 0 4px;font-size:1.3rem}
+.pop p{margin:0 0 14px;color:var(--mut);font-weight:600}
+#lgd{max-height:80vh;overflow-y:auto}
+#lgd h2{margin-top:0}
+#lgd label{display:block;font-size:.78rem;font-weight:800;color:var(--mut);margin:10px 0 3px;text-align:left}
+#lgd button{display:block;width:100%;margin:6px 0;border:none;border-radius:14px;padding:11px;background:var(--soft);color:var(--pri2);font:800 .92rem "Nunito",sans-serif;cursor:pointer;text-align:left;padding-left:14px}
+#lgd button[data-a="sv"]{background:var(--pri);color:#fff;text-align:center;padding-left:11px}
+.pop button{border:none;border-radius:22px;background:var(--pri);color:#fff;font:800 1rem "Nunito",sans-serif;padding:11px 26px}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hi">
+  <div class="ar">اتباع السلف</div>
+  <h1>Ittiba'us Salaf</h1>
+  <p>Ayo menghafal Al-Quran! Dengarkan, ulangi, lalu hafalkan pelan-pelan.</p>
+</div><div class="star">&#9733; <b id="stars">0</b></div></div>
+
+<main>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <div><div class="lb" id="ar1">AKUN</div><div style="font-weight:800" id="ar2">Belum masuk</div></div>
+    <button id="sw" class="dl" style="width:auto;padding:9px 16px">Ganti Akun</button>
+  </div>
+  <div class="tb"><button id="t1" class="on">Hafalan</button><button id="t2">Rekaman</button></div>
+  <div id="v1">
+  <div class="card">
+    <div class="lb">PILIH JUZ</div>
+    <div class="chips" id="chips"></div>
+    <div class="jt" id="jt"></div>
+  </div>
+  <div class="card">
+    <div class="lb">PILIH QARI</div>
+    <select id="qari"></select>
+    <div class="offl"><button id="dl" class="dl">Simpan juz ini untuk offline</button><div class="pg" id="pg"><i id="pgi"></i></div><div class="dls" id="dls"></div></div>
+    <label class="sw"><input type="checkbox" id="hid"> Mode uji hafalan: tutup teks, ketuk ayat untuk mengintip</label>
+  </div>
+  <div id="msg"></div>
+  <div id="list"></div>
+  </div>
+  <div id="v2" style="display:none">
+    <div class="card"><div class="lb" id="fl">REKAMAN</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="fs" style="display:none;margin-bottom:8px;flex:1"></select>
+        <button id="delsantri" class="b2" style="display:none;padding:9px 12px;flex:0 0 auto">Hapus Santri</button>
+      </div>
+      <div class="dls" id="gs"></div></div>
+    <div id="rl"></div>
+  </div>
+</main>
+
+<div id="bar"><div class="in">
+  <div id="now">Ketuk ayat untuk memilih awal hafalan.</div>
+  <div class="g2">
+    <div><label>Dari ayat</label><input type="number" id="from" min="1" value="1"></div>
+    <div><label>Sampai ayat</label><input type="number" id="to" min="1" value="1"></div>
+  </div>
+  <details><summary>&#9881; Pengaturan lain</summary>
+    <div class="g3">
+      <div><label>Ulang tiap ayat</label><select id="rep"><option>1</option><option>3</option><option>5</option><option>10</option></select></div>
+      <div><label>Ulang rentang</label><select id="loop"><option value="1">1x</option><option value="3">3x</option><option value="5">5x</option><option value="0">Terus</option></select></div>
+      <div><label>Kecepatan</label><select id="spd"><option value="0.75">Pelan</option><option value="1" selected>Normal</option><option value="1.25">Cepat</option></select></div>
+    </div>
+  </details>
+  <div class="btns"><button class="sm" id="prev" aria-label="Sebelumnya">&#9664;&#9664;</button><button class="p" id="play">&#9654; Putar</button><button class="sm" id="next" aria-label="Berikutnya">&#9654;&#9654;</button></div>
+</div></div>
+<div class="pop" id="pop"><div id="dg"></div></div>
+<div class="pop" id="lg"><div id="lgd"></div></div>
+<input type="file" id="cap" accept="audio/*" capture style="display:none">
+<audio id="au" preload="auto"></audio>
+
+<script>
+var NAMA=["Alif Lam Mim","Sayaqul","Tilkar Rusul","Lan Tanalu","Wal Muhsanat","La Yuhibbullah","Wa Iza Sami'u","Wa Lau Annana","Qalal Mala'u","Wa'lamu","Ya'tazirun","Wa Ma Min Dabbah","Wa Ma Ubarri'u","Rubama","Subhanalladzi","Qal Alam","Iqtaraba","Qad Aflaha","Wa Qalalladzina","Amman Khalaqa","Utlu Ma Uhiya","Wa Man Yaqnut","Wa Mali","Fa Man Azlamu","Ilaihi Yuraddu","Ha Mim","Qala Fa Ma Khatbukum","Qad Sami'allah","Tabarakalladzi","Amma"];
+var QARI=[["Mishary Alafasy","ar.alafasy"],["Mahmoud Al-Husary (pelan, cocok untuk menghafal)","ar.husary"],["Muhammad Al-Minshawi","ar.minshawi"],["Abdul Basit (murattal)","ar.abdulbasitmurattal"],["Abdurrahman As-Sudais","ar.abdurrahmaansudais"],["Maher Al-Muaiqly","ar.mahermuaiqly"],["Ali Al-Hudhaify","ar.hudhaify"],["Muhammad Jibreel","ar.muhammadjibreel"]];
+var JJ=["TK/RA","SD/MI","SMP/MTs","SMA/MA/SMK","Perguruan tinggi","Umum"];
+var $=function(i){return document.getElementById(i)};
+var A=[],cur=0,reps=0,loops=0,playing=false,cache={};
+var cfg={j:1,q:0};
+try{var r=localStorage.getItem("hqk");if(r)cfg=JSON.parse(r)}catch(e){}
+function save(){try{localStorage.setItem("hqk",JSON.stringify(cfg))}catch(e){}}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function opts(a){return a.map(function(o){return '<option>'+o+'</option>'}).join("")}
+
+QARI.forEach(function(q,k){var o=document.createElement("option");o.value=k;o.textContent=q[0];$("qari").appendChild(o)});
+$("qari").value=cfg.q;
+for(var i=1;i<=30;i++){var b=document.createElement("button");b.textContent=i;b.title=NAMA[i-1];b.dataset.j=i;$("chips").appendChild(b)}
+$("chips").onclick=function(e){var b=e.target.closest("button");if(!b)return;cfg.j=+b.dataset.j;load()};
+function chipMark(){Array.prototype.forEach.call($("chips").children,function(b){b.className=(+b.dataset.j==cfg.j)?"on":""})}
+
+/* ===== Penyimpanan lokal khusus audio juz untuk offline (tidak terkait akun) ===== */
+var DB2,dling=false,CDN="https://cdn.islamic.network/quran/audio/";
+function idb(){return new Promise(function(res,rej){if(DB2)return res(DB2);var rq=indexedDB.open("ittiba",1);rq.onupgradeneeded=function(){rq.result.createObjectStore("k")};rq.onsuccess=function(){DB2=rq.result;res(DB2)};rq.onerror=function(){rej(rq.error)}})}
+function iget(k){return idb().then(function(d){return new Promise(function(res){var q=d.transaction("k").objectStore("k").get(k);q.onsuccess=function(){res(q.result)};q.onerror=function(){res(null)}})}).catch(function(){return null})}
+function ihas(k){return idb().then(function(d){return new Promise(function(res){var q=d.transaction("k").objectStore("k").getKey(k);q.onsuccess=function(){res(q.result!==undefined)};q.onerror=function(){res(false)}})}).catch(function(){return false})}
+function iput(k,v){return idb().then(function(d){return new Promise(function(res,rej){var t=d.transaction("k","readwrite");t.objectStore("k").put(v,k);t.oncomplete=res;t.onerror=function(){rej(t.error)}})})}
+function status(){
+  var j=cfg.j,ed=QARI[+$("qari").value][1];
+  iget("m|"+j+"|"+ed).then(function(m){
+    if(dling)return;
+    $("dls").textContent=m?"Tersimpan. Juz ini bisa dipakai tanpa internet.":"Belum tersimpan. Simpan saat ada internet supaya bisa dipakai offline.";
+    $("dl").textContent=m?"Simpan ulang":"Simpan juz ini untuk offline";
+  });
+}
+function dl(){
+  if(dling||!A.length)return;
+  var j=cfg.j,ed=QARI[+$("qari").value][1],list=A.slice(),n=0,fail=0,tot=list.length;
+  dling=true;$("dl").disabled=true;$("pg").style.display="block";
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  function tick(){$("pgi").style.width=(n/tot*100)+"%";$("dls").textContent="Menyimpan audio... "+n+" / "+tot}
+  tick();
+  function one(a){
+    var k="a|"+ed+"|"+a.g;
+    return ihas(k).then(function(h){if(h)return;
+      return fetch(CDN+"64/"+ed+"/"+a.g+".mp3").then(function(r){if(!r.ok)throw new Error(r.status);return r.blob()}).then(function(b){return iput(k,b)})
+    }).catch(function(){fail++}).then(function(){n++;tick()});
+  }
+  function worker(){var a=list.shift();if(!a)return Promise.resolve();return one(a).then(worker)}
+  Promise.all([worker(),worker(),worker(),worker()]).then(function(){
+    dling=false;$("dl").disabled=false;$("pg").style.display="none";
+    if(fail){$("dls").textContent="Sebagian gagal disimpan ("+fail+" ayat). Periksa internet atau ruang penyimpanan, lalu tekan lagi untuk melanjutkan."}
+    else iput("m|"+j+"|"+ed,1).then(status).catch(function(){$("dls").textContent="Ruang penyimpanan penuh."})
+  });
+}
+$("dl").onclick=dl;
+function get(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
+function load(){
+  var j=cfg.j;cfg.q=+$("qari").value;save();chipMark();
+  $("jt").textContent="Juz "+j+" - "+NAMA[j-1];
+  stop();$("msg").textContent="Sedang memuat juz "+j+"...";$("list").innerHTML="";
+  var tk="t"+j;
+  var pt=cache[tk]?Promise.resolve(cache[tk]):iget(tk).then(function(v){if(v)return cache[tk]=v;return get("https://api.alquran.cloud/v1/juz/"+j+"/quran-uthmani").then(function(d){var a=d.data.ayahs;iput(tk,a).catch(function(){});return cache[tk]=a})});
+  pt.then(function(T){
+    A=T.map(function(t){
+      var x=t.text;
+      if(t.numberInSurah==1&&t.surah.number!=1&&t.surah.number!=9&&x.indexOf("\u0628\u0650\u0633\u0652\u0645\u0650")===0)x=x.split(" ").slice(4).join(" ");
+      return{n:t.numberInSurah,s:t.surah.number,sn:t.surah.englishName,x:x,g:t.number}
+    });
+    draw();status();loadStars();$("msg").textContent=A.length+" ayat. Ketuk satu ayat, atur 'Sampai ayat', lalu tekan Putar.";
+    $("from").max=$("to").max=A.length;$("from").value=1;$("to").value=Math.min(5,A.length);cur=0;mark();
+  }).catch(function(e){
+    $("msg").textContent="Juz ini belum tersimpan di perangkat. Sambungkan internet sekali untuk memuatnya, lalu tekan Simpan untuk offline. ("+e.message+")";
+  });
+}
+function draw(){
+  var h="",last=-1;
+  A.forEach(function(a,k){
+    if(a.s!=last){h+='<div class="sur">Surah '+a.sn+'</div>';last=a.s}
+    h+='<div class="ay" data-k="'+k+'" id="ay'+k+'"><div class="no"><i>'+a.n+'</i> ayat ke-'+a.n+' <span class="got" id="gt'+k+'"></span></div><div class="tx">'+a.x+'</div><div class="acts"><button class="b2" data-a="r" data-k="'+k+'" id="rb'+k+'">&#127908; Rekam</button><button class="b1" data-a="q" data-k="'+k+'">&#9733; Sudah hafal?</button></div></div>';
+  });
+  $("list").innerHTML=h;
+}
+$("list").onclick=function(e){
+  var bt=e.target.closest("button");if(bt){var k2=+bt.dataset.k;if(bt.dataset.a=="r")toggleRec(k2);else ask(k2);return}
+  var d=e.target.closest(".ay");if(!d)return;
+  var k=+d.dataset.k;d.classList.toggle("show");
+  $("from").value=k+1;if(+$("to").value<k+1)$("to").value=k+1;
+  cur=k;mark();
+};
+$("hid").onchange=function(){document.body.classList.toggle("hide",$("hid").checked)};
+
+function rng(){var f=Math.max(1,+$("from").value||1),t=Math.min(A.length,+$("to").value||f);if(t<f)t=f;return[f-1,t-1]}
+function mark(){
+  var rg=rng();
+  Array.prototype.forEach.call(document.querySelectorAll(".ay"),function(el,k){
+    el.classList.toggle("cur",k==cur);el.classList.toggle("inr",k>=rg[0]&&k<=rg[1]);
+  });
+  if(A[cur])$("now").textContent=A[cur].sn+" ayat "+A[cur].n+" - ulangan "+(reps+1)+"/"+$("rep").value+(loops?" - putaran "+(loops+1):"");
+}
+function playCur(){
+  var a=A[cur];if(!a)return;
+  var au=$("au"),ed=QARI[+$("qari").value][1];
+  iget("a|"+ed+"|"+a.g).then(function(b){
+    if(b){au.dataset.try="1";au.src=URL.createObjectURL(b)}
+    else{au.dataset.try="0";au.src=CDN+"128/"+ed+"/"+a.g+".mp3"}
+    au.defaultPlaybackRate=+$("spd").value;au.playbackRate=+$("spd").value;
+    return au.play();
+  }).catch(function(e){$("msg").textContent="Audio belum bisa diputar ("+(e&&e.name||"error")+"). Jika offline, simpan juz ini dulu saat ada internet."});
+  mark();var el=$("ay"+cur);if(el)el.scrollIntoView({block:"center",behavior:"smooth"});
+}
+function start(){
+  if(!A.length)return;
+  var rg=rng();if(cur<rg[0]||cur>rg[1])cur=rg[0];
+  playing=true;$("play").innerHTML="&#10074;&#10074; Jeda";playCur();
+}
+function stop(){playing=false;$("au").pause();$("play").innerHTML="&#9654; Putar"}
+$("play").onclick=function(){if(playing){stop()}else{reps=0;loops=0;start()}};
+$("next").onclick=function(){if(cur<A.length-1){cur++;reps=0;if(playing)playCur();else mark()}};
+$("prev").onclick=function(){if(cur>0){cur--;reps=0;if(playing)playCur();else mark()}};
+$("au").onended=function(){
+  if(!playing)return;
+  var rg=rng(),R=+$("rep").value,L=+$("loop").value;
+  if(reps+1<R){reps++;playCur();return}
+  reps=0;
+  if(cur<rg[1]){cur++;playCur();return}
+  loops++;
+  if(L==0||loops<L){cur=rg[0];playCur();return}
+  loops=0;stop();$("now").textContent="Selesai. Ketuk Rekam pada ayat untuk membaca dari hafalan.";
+};
+$("au").onerror=function(){
+  var au=$("au");
+  if(au.dataset.try==="0"&&A[cur]){au.dataset.try="1";au.src=CDN+"64/"+QARI[+$("qari").value][1]+"/"+A[cur].g+".mp3";au.play().catch(function(){});return}
+  $("msg").textContent="File audio tidak bisa dimuat untuk qari ini. Coba qari lain atau periksa internet.";stop();
+};
+$("spd").onchange=function(){$("au").playbackRate=+$("spd").value};
+$("from").onchange=$("to").onchange=mark;
+$("qari").onchange=function(){cfg.q=+$("qari").value;save();status();if(playing){reps=0;playCur()}};
+
+/* ===== Dialog kecil serbaguna ===== */
+function dlg(ic,t,p,bs){
+  var h='<span class="big" style="display:block">'+ic+'</span><h2>'+t+'</h2><p>'+p+'</p>';
+  bs.forEach(function(b,i){h+='<button data-i="'+i+'" style="margin:4px">'+b[0]+'</button>'});
+  $("dg").innerHTML=h;$("pop").className="pop on";
+  $("dg").onclick=function(e){var b=e.target.closest("button");if(!b)return;$("pop").className="pop";var f=bs[+b.dataset.i][1];if(f)f()};
+}
+
+/* cek kata otomatis: mencocokkan kata yang dikenali dengan teks ayat (bukan penilaian tajwid) */
+function nz(s){return s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,"").replace(/[\u0623\u0625\u0622\u0671]/g,"\u0627").replace(/\u0649/g,"\u064A").replace(/\u0629/g,"\u0647").replace(/[^\u0621-\u064A ]/g," ").split(/\s+/).filter(Boolean)}
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++)d[i]=[i];for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]}
+function same(a,b){return a==b||(a.length>3&&lev(a,b)<=1)}
+function score(x,h){var E=nz(x),H=nz(h),L=[],i,j;for(i=0;i<=E.length;i++){L[i]=[];for(j=0;j<=H.length;j++)L[i][j]=0}
+  for(i=1;i<=E.length;i++)for(j=1;j<=H.length;j++)L[i][j]=same(E[i-1],H[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
+  return E.length?L[E.length][H.length]/E.length:0}
+
+/* ===== AUTH & API ke backend kustom ===== */
+var DEFAULT_SERVER="https://ittiba-backend-production.up.railway.app";
+var AUTH={base:"",token:"",user:null};
+try{var ra=localStorage.getItem("ittibaAuth");if(ra)AUTH=JSON.parse(ra)}catch(e){}
+if(!AUTH.base)AUTH.base=DEFAULT_SERVER;
+function saveAuth(){try{localStorage.setItem("ittibaAuth",JSON.stringify(AUTH))}catch(e){}}
+function api(path,o){
+  o=o||{};var headers=o.headers||{};
+  if(AUTH.token)headers["Authorization"]="Bearer "+AUTH.token;
+  var body=o.body;
+  if(o.json){headers["Content-Type"]="application/json";body=JSON.stringify(o.json)}
+  return fetch(AUTH.base+path,{method:o.method||"GET",headers:headers,body:body}).then(function(r){
+    return r.json().catch(function(){return{}}).then(function(d){if(!r.ok){var e=new Error(d.error||("http_"+r.status));e.data=d;throw e}return d});
+  });
+}
+function isU(){return !!(AUTH.user&&AUTH.user.role=="u")}
+function needServer(){return !AUTH.base}
+function needName(){
+  if(!AUTH.user){dlg("&#128100;","Masuk sebagai santri","Merekam dan mendapat bintang perlu akun santri.",[["Masuk / Daftar",showLogin],["Batal"]]);return false}
+  if(AUTH.user.role!="s"){dlg("&#128100;","Khusus santri","Akun ustadz tidak bisa merekam atau mendapat bintang.",[["Baik"]]);return false}
+  return true;
+}
+
+/* bintang / hafalan */
+var myStars={};
+function loadStars(){
+  if(!AUTH.user){myStars={};updateStars();return}
+  api("/api/stars").then(function(d){myStars={};(d.stars||[]).forEach(function(g){myStars[g]=1});updateStars()}).catch(function(){});
+}
+function has(g){return !!myStars[g]}
+function updateStars(){var n=0,k;for(k in myStars)n++;$("stars").textContent=n;A.forEach(function(a,i){var e=$("gt"+i);if(e)e.textContent=has(a.g)?"\u2605 hafal":""})}
+function ask(k){
+  if(!needName())return;var a=A[k];
+  dlg("&#10067;","Apakah antum sudah menghafal ayat ini?",esc(a.sn)+" ayat "+a.n,[
+    ["Sudah",function(){
+      if(has(a.g)){dlg("&#9733;","Ayat ini sudah dapat bintang","Coba hafalkan ayat berikutnya.",[["Lanjut"]]);return}
+      api("/api/stars",{method:"POST",json:{ayah_g:a.g}}).then(function(){myStars[a.g]=1;updateStars();dlg("&#9733;","MasyaAllah, hebat!","Antum dapat 1 bintang.",[["Lanjut"]])})
+      .catch(function(){dlg("&#9888;","Gagal menyimpan","Periksa koneksi internet ke server.",[["Baik"]])});
+    }],
+    ["Belum",function(){dlg("&#128170;","Tidak apa-apa","Dengarkan dan ulangi lagi sampai hafal.",[["Lanjut"]])}]]);
+}
+
+/* rekaman */
+var recBusy=false,MR=null,SR=null,chunks=[],trans="",ayIdx=-1;
+var MOT=["MasyaAllah, bacaan antum bagus! Terus semangat menghafal.","Barakallahu fiik! Bacaan antum sudah benar, lanjutkan ya.","Hebat! Bacaan antum lancar. Semoga Allah mudahkan hafalan antum."];
+function recUI(){A.forEach(function(a,k){var e=$("rb"+k);if(e){var on=recBusy&&k==ayIdx;e.innerHTML=on?"&#9632; Berhenti":"&#127908; Rekam";e.classList.toggle("rc",on)}})}
+function toggleRec(k){
+  if(recBusy){stopRec();return}
+  if(!needName())return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){fbRec(k);return}
+  stop();
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+    ayIdx=k;chunks=[];trans="";recBusy=true;
+    MR=new MediaRecorder(s);MR.done=false;MR.proc=false;
+    MR.ondataavailable=function(e){if(e.data.size)chunks.push(e.data)};
+    MR.onstop=function(){s.getTracks().forEach(function(t){t.stop()});MR.done=true;finish()};
+    MR.start();
+    var SRc=window.SpeechRecognition||window.webkitSpeechRecognition;SR=null;
+    if(SRc){try{SR=new SRc();SR.lang="ar-SA";SR.continuous=true;SR.interimResults=false;SR.done=false;SR.err=false;
+      SR.onresult=function(e){for(var i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)trans+=" "+e.results[i][0].transcript};
+      SR.onerror=function(){SR.err=true};
+      SR.onend=function(){SR.done=true;finish()};
+      SR.start()}catch(x){SR=null}}
+    recUI();
+  }).catch(function(e){recBusy=false;recUI();fbRec(k,e&&e.name)});
+}
+function stopRec(){
+  try{MR.stop()}catch(e){}try{if(SR)SR.stop()}catch(e){}
+  recBusy=false;recUI();
+  setTimeout(function(){if(SR&&!SR.done){SR.done=true;finish()}},3500);
+}
+function finish(){
+  if(!MR||!MR.done||(SR&&!SR.done)||MR.proc)return;MR.proc=true;
+  var a=A[ayIdx],blob=new Blob(chunks,{type:MR.mimeType||"audio/webm"}),sc=null;
+  if(SR&&!SR.err&&trans.trim())sc=score(a.x,trans);
+  uploadRec(a,blob,sc);
+}
+function uploadRec(a,blob,sc){
+  var fd=new FormData();
+  fd.append("audio",blob,"rec"+((blob.type||"").indexOf("mp4")>=0?".m4a":".webm"));
+  fd.append("sn",a.sn);fd.append("n",a.n);fd.append("j",cfg.j);fd.append("g",a.g);
+  if(sc!==null)fd.append("sc",sc);
+  api("/api/recordings",{method:"POST",body:fd}).then(function(){
+    if(sc===null)dlg("&#127908;","Rekaman terkirim","Cek otomatis belum bisa membaca suara. Rekaman tetap terkirim ke server untuk dikoreksi ustadz.",[["Lanjut"]]);
+    else if(sc>=0.75)dlg("&#127775;","Bacaan sesuai",MOT[Math.floor(Math.random()*MOT.length)]+"<br><small>Cek otomatis hanya mencocokkan kata. Penilaian tajwid oleh ustadz.</small>",[["Lanjut"]]);
+    else dlg("&#128260;","Belum tepat","Ulang lagi sampai benar<br><small>Cek otomatis hanya mencocokkan kata. Penilaian tajwid oleh ustadz.</small>",[["Ulangi",function(){toggleRec(ayIdx)}],["Nanti"]]);
+  }).catch(function(){dlg("&#9888;","Gagal mengirim rekaman","Periksa koneksi internet ke server, lalu coba lagi.",[["Baik"]])});
+}
+function fbRec(k,en){
+  var why=en=="NotAllowedError"?"Izin mikrofon ditolak. Izinkan mikrofon di pengaturan browser, atau":"Browser ini tidak mengizinkan perekam di dalam aplikasi. Antum bisa";
+  dlg("&#127908;","Pakai perekam HP",why+" rekam lewat aplikasi perekam bawaan HP.",[["Buka perekam",function(){ayIdx=k;$("cap").value="";$("cap").click()}],["Batal"]]);
+}
+$("cap").onchange=function(){
+  var f=this.files&&this.files[0];if(!f||ayIdx<0)return;
+  uploadRec(A[ayIdx],f,null);
+};
+
+/* tab Hafalan / Rekaman */
+function tab(n){$("v1").style.display=n==1?"":"none";$("v2").style.display=n==2?"":"none";$("bar").style.display=n==1?"":"none";$("t1").className=n==1?"on":"";$("t2").className=n==2?"on":"";if(n==2){stop();listRec()}}
+$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2)};
+
+var santriList=[];
+function loadSantriList(){api("/api/santri").then(function(d){santriList=d.santri||[];fillFs()}).catch(function(){})}
+function fillFs(){
+  var curv=$("fs").value||"*",h='<option value="*">Semua santri</option>';
+  santriList.forEach(function(s){h+='<option value="'+s.id+'">'+esc(s.nm)+" - "+esc(s.jj)+" "+esc(s.kl)+'</option>'});
+  $("fs").innerHTML=h;$("fs").value=curv;
+}
+$("fs").onchange=function(){delsantriUI();listRec()};
+function delsantriUI(){
+  var v=$("fs").value;
+  $("delsantri").style.display=(isU()&&v&&v!="*")?"inline-block":"none";
+}
+$("delsantri").onclick=function(){
+  var id=$("fs").value,opt=$("fs").options[$("fs").selectedIndex];
+  if(!id||id=="*")return;
+  var nm=opt?opt.textContent:"santri ini";
+  dlg("&#9888;","Hapus akun santri?","Akun, bintang hafalan, dan semua rekaman "+esc(nm)+" akan dihapus permanen dari server. Tindakan ini tidak bisa dibatalkan.",[
+    ["Hapus",function(){
+      api("/api/santri/"+id,{method:"DELETE"}).then(function(){
+        dlg("&#9989;","Akun terhapus","Akun santri sudah dihapus dari server.",[["Baik"]]);
+        loadSantriList();listRec();
+      }).catch(function(){dlg("&#9888;","Gagal menghapus","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
+    }],
+    ["Batal"]
+  ]);
+};
+function gsUI(){
+  var u=AUTH.user;
+  $("fl").textContent=!u?"REKAMAN":(u.role=="u"?"KOREKSI BACAAN SANTRI":"REKAMAN SAYA");
+  $("fs").style.display=isU()?"block":"none";
+  $("gs").textContent=!u?"Masuk dengan akun untuk melihat rekaman.":(u.role=="u"?"Pilih santri, dengarkan rekamannya, lalu beri nilai dan catatan.":"Nilai dan catatan dari ustadz muncul di sini.");
+  if(isU())loadSantriList();
+  if($("v2").style.display!="none")listRec();
+}
+function listRec(){
+  if(!AUTH.user){$("rl").innerHTML="";return}
+  var qs=(isU()&&$("fs").value&&$("fs").value!="*")?("?userId="+encodeURIComponent($("fs").value)):"";
+  api("/api/recordings"+qs).then(function(d){renderRec(d.recordings||[])}).catch(function(){$("rl").innerHTML='<div class="dls">Gagal memuat rekaman dari server.</div>'});
+}
+function renderRec(L){
+  var ust=isU();
+  var h=L.length?"":'<div class="dls">Belum ada rekaman.</div>';
+  L.forEach(function(m){
+    var sc=(m.sc===null||m.sc===undefined)?'<span class="bd nt">Cek otomatis: tidak tersedia</span>':(m.sc>=0.75?'<span class="bd ok">Cek kata otomatis: sesuai</span>':'<span class="bd no2">Cek kata otomatis: ulang lagi</span>');
+    var tc=(m.nv!==null&&m.nv!==undefined)?'<span class="bd '+(m.nv>=75?"ok":"no2")+'">Nilai: '+m.nv+'</span><span class="bd nt">Dikoreksi oleh '+esc(m.tg||"")+(m.tf=="ya"?" (Guru Tahfizh)":"")+'</span>'+(m.tnote?'<div class="dls">Catatan: '+esc(m.tnote)+'</div>':""):'<span class="bd nt">Menunggu koreksi ustadz</span>';
+    var src=AUTH.base+"/api/recordings/"+m.id+"/audio?token="+encodeURIComponent(AUTH.token);
+    var fn=esc(m.nm)+"-"+esc(m.sn)+"-ayat"+m.n;
+    h+='<div class="ri"><b>'+esc(m.nm)+'</b> <span class="dls">'+esc(m.jj||"")+(m.kl?" kelas "+esc(m.kl):"")+'</span><div class="dls">'+esc(m.sn)+' ayat '+m.n+' - Juz '+m.j+' - '+new Date(m.created_at).toLocaleString("id-ID")+'</div><audio controls preload="none" src="'+src+'"></audio>'+sc+tc+
+      (ust?'<div class="tn"><label class="dls">Nilai bacaan (0-100)</label><input type="number" id="nv'+m.id+'" min="0" max="100" value="'+(m.nv!==null&&m.nv!==undefined?m.nv:"")+'"><textarea id="tt'+m.id+'" rows="2" placeholder="Catatan koreksi tajwid">'+esc(m.tnote||"")+'</textarea><div class="acts"><button class="b1" data-r="sv" data-id="'+m.id+'">Simpan koreksi</button><button class="b2" data-r="del" data-id="'+m.id+'">Hapus</button></div></div>':"")+
+      '<div class="acts"><button class="b2" data-r="sh" data-id="'+m.id+'" data-src="'+src+'" data-fn="'+fn+'">Bagikan / Unduh</button></div></div>';
+  });
+  $("rl").innerHTML=h;
+}
+function shareRec(url,fname){
+  fetch(url).then(function(r){return r.blob()}).then(function(b){
+    var f=new File([b],fname+((b.type||"").indexOf("mp4")>=0?".m4a":".webm"),{type:b.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:"Rekaman hafalan"}).catch(function(){})}
+    else{var u=URL.createObjectURL(f),a=document.createElement("a");a.href=u;a.download=f.name;a.click();setTimeout(function(){URL.revokeObjectURL(u)},4000)}
+  }).catch(function(){dlg("&#9888;","Gagal mengunduh","Periksa koneksi internet.",[["Baik"]])});
+}
+$("rl").onclick=function(e){
+  var b=e.target.closest("button");if(!b||!b.dataset.r)return;var id=b.dataset.id,r=b.dataset.r;
+  if(r=="sh"){shareRec(b.dataset.src,b.dataset.fn);return}
+  if(!isU())return;
+  if(r=="del"){if(confirm("Hapus rekaman ini?"))api("/api/recordings/"+id,{method:"DELETE"}).then(listRec);return}
+  if(r=="sv"){
+    var nv=parseInt(($("nv"+id)||{}).value,10);
+    if(isNaN(nv)||nv<0||nv>100){dlg("&#9998;","Nilai belum diisi","Isi nilai antara 0 sampai 100.",[["Baik"]]);return}
+    var tnote=($("tt"+id)||{}).value||"";
+    api("/api/recordings/"+id+"/grade",{method:"PATCH",json:{nv:nv,tnote:tnote}}).then(function(){listRec();dlg("&#9989;","Koreksi tersimpan","Nilai "+nv+" tersimpan.",[["Lanjut"]])})
+    .catch(function(){dlg("&#9888;","Gagal menyimpan","Periksa koneksi ke server.",[["Baik"]])});
+  }
+};
+
+/* akun: alamat server, masuk, daftar */
+function bar2(){
+  var u=AUTH.user;
+  $("ar1").textContent=!u?"AKUN":(u.role=="s"?"SANTRI":(u.tf=="ya"?"GURU TAHFIZH":"USTADZ"));
+  $("ar2").textContent=!u?"Belum masuk":(u.nm+" - "+u.jj+(u.kl?" kelas "+u.kl:""));
+  updateStars();gsUI();
+}
+function showLogin(){ if(needServer())serverForm(); else if(AUTH.user)accountMenu(); else loginForm() }
+function serverForm(){
+  $("lgd").innerHTML='<h2>Alamat Server</h2><label>Alamat backend (mis. https://nama-app.up.railway.app)</label><input type="text" id="sv" placeholder="https://..." autocomplete="off" value="'+esc(AUTH.base)+'"><button data-a="svsrv">Simpan</button>'+(AUTH.base?'<button data-a="bk">Kembali</button>':'');
+  $("lg").className="pop on";
+}
+function loginForm(){
+  $("lgd").innerHTML='<h2>Masuk</h2><label>Username</label><input type="text" id="lu" autocomplete="off"><label>Kata sandi</label><input type="password" id="lp" autocomplete="off"><button data-a="dologin">Masuk</button><button data-a="daftar">Belum punya akun? Daftar</button><button data-a="chsv">Ganti alamat server</button>';
+  $("lg").className="pop on";
+}
+function regForm(){
+  $("lgd").innerHTML='<h2>Daftar Akun</h2><label>Saya adalah</label><select id="rr"><option value="s">Santri</option><option value="u">Ustadz</option></select><label>Nama</label><input type="text" id="rn" autocomplete="off"><div id="rtfwrap" style="display:none"><label>Guru tahfizh?</label><select id="rtf"><option value="ya">Ya</option><option value="bukan">Bukan</option></select></div><label>Jenjang pendidikan</label><select id="rj">'+opts(JJ)+'</select><label>Kelas</label><input type="text" id="rk" autocomplete="off"><label>Username</label><input type="text" id="ru" autocomplete="off"><label>Kata sandi (min 6 karakter)</label><input type="password" id="rp" autocomplete="off"><button data-a="doreg">Daftar</button><button data-a="bklogin">Sudah punya akun? Masuk</button>';
+  $("lg").className="pop on";
+  $("rr").onchange=function(){$("rtfwrap").style.display=$("rr").value=="u"?"block":"none"};
+}
+function accountMenu(){
+  var u=AUTH.user;
+  var h='<h2>'+esc(u.nm)+'</h2><p>'+(u.role=="u"?(u.tf=="ya"?"Guru Tahfizh":"Ustadz"):"Santri")+" - "+esc(u.jj)+" "+esc(u.kl)+'</p><button data-a="logout">Keluar</button><button data-a="chsv">Ganti alamat server</button>';
+  if(u.role=="u")h+='<button data-a="kelola">Kelola akun santri</button>';
+  h+='<button class="b2" style="color:#b3262b;background:#fde3e3" data-a="delme">Hapus akun saya</button><button data-a="x">Tutup</button>';
+  $("lgd").innerHTML=h;
+  $("lg").className="pop on";
+}
+function kelolaSantri(){
+  $("lgd").innerHTML='<h2>Kelola Akun Santri</h2><p>Memuat daftar santri...</p>';$("lg").className="pop on";
+  api("/api/santri").then(function(d){
+    var l=d.santri||[],h='<h2>Kelola Akun Santri</h2>';
+    if(!l.length)h+='<p>Belum ada santri terdaftar.</p>';
+    l.forEach(function(s){h+='<div style="border:1px solid var(--bd);border-radius:12px;padding:8px;margin:6px 0;text-align:left"><b>'+esc(s.nm)+'</b><div class="dls">'+esc(s.jj)+' '+esc(s.kl)+' - username: <b>'+esc(s.username)+'</b></div><div class="acts"><button class="b1" style="width:auto;padding:6px 10px" data-a="resetpw" data-id="'+s.id+'" data-nm="'+esc(s.nm)+'">Atur Ulang Sandi</button><button class="b2" style="color:#b3262b;background:#fde3e3;width:auto;padding:6px 10px" data-a="delsantri" data-id="'+s.id+'" data-nm="'+esc(s.nm)+'">Hapus</button></div></div>'});
+    h+='<button data-a="bk">Kembali</button>';
+    $("lgd").innerHTML=h;
+  }).catch(function(){$("lgd").innerHTML='<h2>Kelola Akun Santri</h2><p>Gagal memuat. Periksa koneksi.</p><button data-a="bk">Kembali</button>'});
+}
+$("lgd").onclick=function(e){
+  var b=e.target.closest("button");if(!b)return;var a=b.dataset.a;
+  if(a=="svsrv"){
+    var v=$("sv").value.trim().replace(/\/$/,"");
+    if(!/^https?:\/\//.test(v)){dlg("&#9998;","Alamat belum sesuai","Tulis alamat lengkap, contoh: https://nama-app.up.railway.app",[["Baik"]]);return}
+    AUTH.base=v;saveAuth();loginForm();
+  } else if(a=="bk"){AUTH.user?accountMenu():loginForm()}
+  else if(a=="chsv"){serverForm()}
+  else if(a=="daftar"){regForm()}
+  else if(a=="bklogin"){loginForm()}
+  else if(a=="logout"){AUTH.token="";AUTH.user=null;saveAuth();$("lg").className="pop";bar2()}
+  else if(a=="x"){$("lg").className="pop"}
+  else if(a=="kelola"){kelolaSantri()}
+  else if(a=="delme"){
+    if(!confirm("Yakin hapus akun ini? Semua bintang dan rekaman akan hilang permanen dan tidak bisa dikembalikan."))return;
+    api("/api/account",{method:"DELETE"}).then(function(){AUTH.token="";AUTH.user=null;saveAuth();$("lg").className="pop";bar2();dlg("&#9989;","Akun terhapus","Akun dan datanya sudah dihapus dari server.",[["Baik"]])})
+    .catch(function(){dlg("&#9888;","Gagal menghapus","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
+  }
+  else if(a=="delsantri"){
+    if(!confirm('Yakin hapus akun santri "'+b.dataset.nm+'"? Semua bintang dan rekamannya akan hilang permanen.'))return;
+    api("/api/santri/"+b.dataset.id,{method:"DELETE"}).then(kelolaSantri)
+    .catch(function(){dlg("&#9888;","Gagal menghapus","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
+  }
+  else if(a=="resetpw"){
+    var np=prompt('Sandi baru untuk "'+b.dataset.nm+'" (minimal 6 karakter):');
+    if(np===null)return;
+    if(np.length<6){dlg("&#9998;","Sandi terlalu pendek","Sandi minimal 6 karakter.",[["Baik"]]);return}
+    api("/api/santri/"+b.dataset.id+"/password",{method:"PATCH",json:{password:np}}).then(function(){
+      dlg("&#9989;","Sandi diubah",'Sandi baru untuk "'+b.dataset.nm+'" adalah: '+esc(np)+'<br><small>Catat atau beri tahu langsung ke santri tersebut.</small>',[["Baik",kelolaSantri]]);
+    }).catch(function(){dlg("&#9888;","Gagal mengubah","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
+  }
+  else if(a=="dologin"){
+    var un=$("lu").value.trim(),pw=$("lp").value;if(!un||!pw)return;
+    api("/api/login",{method:"POST",json:{username:un,password:pw}}).then(function(d){AUTH.token=d.token;AUTH.user=d.user;saveAuth();$("lg").className="pop";bar2()})
+    .catch(function(){dlg("&#128274;","Gagal masuk","Username atau kata sandi salah, atau server tidak bisa dihubungi.",[["Baik"]])});
+  } else if(a=="doreg"){
+    var body={role:$("rr").value,nm:$("rn").value.trim(),jj:$("rj").value,kl:$("rk").value.trim(),username:$("ru").value.trim(),password:$("rp").value};
+    if($("rr").value=="u")body.tf=$("rtf").value;
+    if(!body.nm||!body.kl||!body.username||body.password.length<6){dlg("&#9998;","Lengkapi data","Semua kolom wajib diisi, kata sandi minimal 6 karakter.",[["Baik"]]);return}
+    api("/api/register",{method:"POST",json:body}).then(function(d){AUTH.token=d.token;AUTH.user=d.user;saveAuth();$("lg").className="pop";bar2()})
+    .catch(function(e){dlg("&#9998;","Tidak bisa mendaftar",(e.data&&e.data.error=="username_taken")?"Username sudah dipakai, pilih yang lain.":"Pendaftaran gagal. Periksa alamat server dan koneksi internet.",[["Baik"]])});
+  }
+};
+$("sw").onclick=showLogin;
+
+bar2();
+if(!AUTH.user)showLogin();
+load();
+</script>
+</body>
+</html>
