@@ -365,7 +365,8 @@ function api(path,o){
     return r.json().catch(function(){return{}}).then(function(d){if(!r.ok){var e=new Error(d.error||("http_"+r.status));e.data=d;throw e}return d});
   });
 }
-function isU(){return !!(AUTH.user&&AUTH.user.role=="u")}
+function isU(){return !!(AUTH.user&&(AUTH.user.role=="u"||AUTH.user.role=="a"))}
+function isA(){return !!(AUTH.user&&AUTH.user.role=="a")}
 function needServer(){return !AUTH.base}
 function needName(){
   if(!AUTH.user){dlg("&#128100;","Masuk sebagai santri","Merekam dan mendapat bintang perlu akun santri.",[["Masuk / Daftar",showLogin],["Batal"]]);return false}
@@ -528,8 +529,8 @@ $("rl").onclick=function(e){
 /* akun: alamat server, masuk, daftar */
 function bar2(){
   var u=AUTH.user;
-  $("ar1").textContent=!u?"AKUN":(u.role=="s"?"SANTRI":(u.tf=="ya"?"GURU TAHFIZH":"USTADZ"));
-  $("ar2").textContent=!u?"Belum masuk":(u.nm+" - "+u.jj+(u.kl?" kelas "+u.kl:""));
+  $("ar1").textContent=!u?"AKUN":(u.role=="a"?"ADMIN PUSAT":(u.role=="s"?"SANTRI":(u.tf=="ya"?"GURU TAHFIZH":"USTADZ")));
+  $("ar2").textContent=!u?"Belum masuk":(u.role=="a"?u.nm:(u.nm+" - "+u.jj+(u.kl?" kelas "+u.kl:"")));
   updateStars();gsUI();
 }
 function showLogin(){ if(needServer())serverForm(); else if(AUTH.user)accountMenu(); else loginForm() }
@@ -542,17 +543,41 @@ function loginForm(){
   $("lg").className="pop on";
 }
 function regForm(){
-  $("lgd").innerHTML='<h2>Daftar Akun</h2><label>Saya adalah</label><select id="rr"><option value="s">Santri</option><option value="u">Ustadz</option></select><label>Nama</label><input type="text" id="rn" autocomplete="off"><div id="rtfwrap" style="display:none"><label>Guru tahfizh?</label><select id="rtf"><option value="ya">Ya</option><option value="bukan">Bukan</option></select></div><label>Jenjang pendidikan</label><select id="rj">'+opts(JJ)+'</select><label>Kelas</label><input type="text" id="rk" autocomplete="off"><label>Username</label><input type="text" id="ru" autocomplete="off"><label>Kata sandi (min 6 karakter)</label><input type="password" id="rp" autocomplete="off"><button data-a="doreg">Daftar</button><button data-a="bklogin">Sudah punya akun? Masuk</button>';
+  $("lgd").innerHTML='<h2>Daftar Akun</h2><label>Saya adalah</label><select id="rr"><option value="s">Santri</option><option value="u">Ustadz</option><option value="a">Admin Pusat</option></select><label>Nama</label><input type="text" id="rn" autocomplete="off"><div id="rtfwrap" style="display:none"><label>Guru tahfizh?</label><select id="rtf"><option value="ya">Ya</option><option value="bukan">Bukan</option></select></div><div id="acwrap" style="display:none"><label>Kode Admin</label><input type="password" id="rac" autocomplete="off"></div><div id="jkwrap"><label>Jenjang pendidikan</label><select id="rj">'+opts(JJ)+'</select><label>Kelas</label><input type="text" id="rk" autocomplete="off"></div><label>Username</label><input type="text" id="ru" autocomplete="off"><label>Kata sandi (min 6 karakter)</label><input type="password" id="rp" autocomplete="off"><button data-a="doreg">Daftar</button><button data-a="bklogin">Sudah punya akun? Masuk</button>';
   $("lg").className="pop on";
-  $("rr").onchange=function(){$("rtfwrap").style.display=$("rr").value=="u"?"block":"none"};
+  $("rr").onchange=function(){
+    var v=$("rr").value;
+    $("rtfwrap").style.display=v=="u"?"block":"none";
+    $("acwrap").style.display=v=="a"?"block":"none";
+    $("jkwrap").style.display=v=="a"?"none":"block";
+  };
 }
 function accountMenu(){
   var u=AUTH.user;
-  var h='<h2>'+esc(u.nm)+'</h2><p>'+(u.role=="u"?(u.tf=="ya"?"Guru Tahfizh":"Ustadz"):"Santri")+" - "+esc(u.jj)+" "+esc(u.kl)+'</p><button data-a="logout">Keluar</button><button data-a="chsv">Ganti alamat server</button>';
-  if(u.role=="u")h+='<button data-a="kelola">Kelola akun santri</button>';
+  var peran=u.role=="a"?"Admin Pusat":(u.role=="u"?(u.tf=="ya"?"Guru Tahfizh":"Ustadz"):"Santri");
+  var h='<h2>'+esc(u.nm)+'</h2><p>'+peran+(u.role=="a"?"":(" - "+esc(u.jj)+" "+esc(u.kl)))+'</p><button data-a="logout">Keluar</button><button data-a="chsv">Ganti alamat server</button>';
+  if(u.role=="u"||u.role=="a")h+='<button data-a="kelola">Kelola akun santri</button>';
+  if(u.role=="a")h+='<button data-a="kelolaadmin">Kelola Semua Akun (Admin)</button>';
   h+='<button class="b2" style="color:#b3262b;background:#fde3e3" data-a="delme">Hapus akun saya</button><button data-a="x">Tutup</button>';
   $("lgd").innerHTML=h;
   $("lg").className="pop on";
+}
+function kelolaAdmin(){
+  $("lgd").innerHTML='<h2>Kelola Semua Akun</h2><p>Memuat...</p>';$("lg").className="pop on";
+  api("/api/users").then(function(d){
+    var l=d.users||[],h='<h2>Kelola Semua Akun</h2>';
+    if(!l.length)h+='<p>Belum ada akun.</p>';
+    l.forEach(function(s){
+      var peran=s.role=="a"?"Admin Pusat":(s.role=="u"?(s.tf=="ya"?"Guru Tahfizh":"Ustadz"):"Santri");
+      var isMe=AUTH.user&&s.id==AUTH.user.id;
+      h+='<div style="border:1px solid var(--bd);border-radius:12px;padding:8px;margin:6px 0;text-align:left"><b>'+esc(s.nm)+'</b> <span class="dls">('+peran+')</span><div class="dls">'+esc(s.jj||"")+' '+esc(s.kl||"")+' - username: <b>'+esc(s.username)+'</b></div>';
+      if(isMe)h+='<div class="dls">Ini akun Anda sendiri.</div>';
+      else h+='<div class="acts"><button class="b1" style="width:auto;padding:6px 10px" data-a="aresetpw" data-id="'+s.id+'" data-nm="'+esc(s.nm)+'">Atur Ulang Sandi</button><button class="b2" style="color:#b3262b;background:#fde3e3;width:auto;padding:6px 10px" data-a="adeluser" data-id="'+s.id+'" data-nm="'+esc(s.nm)+'">Hapus</button></div>';
+      h+='</div>';
+    });
+    h+='<button data-a="bk">Kembali</button>';
+    $("lgd").innerHTML=h;
+  }).catch(function(){$("lgd").innerHTML='<h2>Kelola Semua Akun</h2><p>Gagal memuat. Periksa koneksi.</p><button data-a="bk">Kembali</button>'});
 }
 function kelolaSantri(){
   $("lgd").innerHTML='<h2>Kelola Akun Santri</h2><p>Memuat daftar santri...</p>';$("lg").className="pop on";
@@ -600,11 +625,31 @@ $("lgd").onclick=function(e){
     api("/api/login",{method:"POST",json:{username:un,password:pw}}).then(function(d){AUTH.token=d.token;AUTH.user=d.user;saveAuth();$("lg").className="pop";bar2()})
     .catch(function(){dlg("&#128274;","Gagal masuk","Username atau kata sandi salah, atau server tidak bisa dihubungi.",[["Baik"]])});
   } else if(a=="doreg"){
-    var body={role:$("rr").value,nm:$("rn").value.trim(),jj:$("rj").value,kl:$("rk").value.trim(),username:$("ru").value.trim(),password:$("rp").value};
-    if($("rr").value=="u")body.tf=$("rtf").value;
+    var rrv=$("rr").value;
+    var body={role:rrv,nm:$("rn").value.trim(),jj:rrv=="a"?"Admin":$("rj").value,kl:rrv=="a"?"-":$("rk").value.trim(),username:$("ru").value.trim(),password:$("rp").value};
+    if(rrv=="u")body.tf=$("rtf").value;
+    if(rrv=="a")body.adminCode=$("rac").value;
     if(!body.nm||!body.kl||!body.username||body.password.length<6){dlg("&#9998;","Lengkapi data","Semua kolom wajib diisi, kata sandi minimal 6 karakter.",[["Baik"]]);return}
     api("/api/register",{method:"POST",json:body}).then(function(d){AUTH.token=d.token;AUTH.user=d.user;saveAuth();$("lg").className="pop";bar2()})
-    .catch(function(e){dlg("&#9998;","Tidak bisa mendaftar",(e.data&&e.data.error=="username_taken")?"Username sudah dipakai, pilih yang lain.":"Pendaftaran gagal. Periksa alamat server dan koneksi internet.",[["Baik"]])});
+    .catch(function(e){
+      var code=e.data&&e.data.error;
+      var msg=code=="username_taken"?"Username sudah dipakai, pilih yang lain.":code=="invalid_admin_code"?"Kode Admin salah atau belum diatur di server.":"Pendaftaran gagal. Periksa alamat server dan koneksi internet.";
+      dlg("&#9998;","Tidak bisa mendaftar",msg,[["Baik"]]);
+    });
+  }
+  else if(a=="kelolaadmin"){kelolaAdmin()}
+  else if(a=="aresetpw"){
+    var np=prompt('Sandi baru untuk "'+b.dataset.nm+'" (minimal 6 karakter):');
+    if(np===null)return;
+    if(np.length<6){dlg("&#9998;","Sandi terlalu pendek","Sandi minimal 6 karakter.",[["Baik"]]);return}
+    api("/api/users/"+b.dataset.id+"/password",{method:"PATCH",json:{password:np}}).then(function(){
+      dlg("&#9989;","Sandi diubah",'Sandi baru untuk "'+b.dataset.nm+'" adalah: '+esc(np)+'<br><small>Catat atau beri tahu langsung ke orang tersebut.</small>',[["Baik",kelolaAdmin]]);
+    }).catch(function(){dlg("&#9888;","Gagal mengubah","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
+  }
+  else if(a=="adeluser"){
+    if(!confirm('Yakin hapus akun "'+b.dataset.nm+'"? Semua data terkait akan hilang permanen.'))return;
+    api("/api/users/"+b.dataset.id,{method:"DELETE"}).then(kelolaAdmin)
+    .catch(function(){dlg("&#9888;","Gagal menghapus","Periksa koneksi ke server, lalu coba lagi.",[["Baik"]])});
   }
 };
 $("sw").onclick=showLogin;
