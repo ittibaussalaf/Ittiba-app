@@ -114,14 +114,15 @@ textarea{width:100%;border:2px solid var(--soft);border-radius:12px;padding:8px;
   <div class="tb"><button id="t1" class="on">Hafalan</button><button id="t2">Rekaman</button></div>
   <div id="v1">
   <div class="card">
-    <div class="lb">PILIH JUZ</div>
-    <div class="chips" id="chips"></div>
+    <div class="tb" style="margin-bottom:10px"><button id="mj" class="on">Per Juz</button><button id="ms">Per Surah</button></div>
+    <div id="pjuz"><div class="lb">PILIH JUZ</div><div class="chips" id="chips"></div></div>
+    <div id="psurah" style="display:none"><div class="lb">PILIH SURAH</div><select id="surahSel"></select></div>
     <div class="jt" id="jt"></div>
   </div>
   <div class="card">
     <div class="lb">PILIH QARI</div>
     <select id="qari"></select>
-    <div class="offl"><button id="dl" class="dl">Simpan juz ini untuk offline</button><div class="pg" id="pg"><i id="pgi"></i></div><div class="dls" id="dls"></div></div>
+    <div class="offl"><button id="dl" class="dl">Simpan untuk offline</button><div class="pg" id="pg"><i id="pgi"></i></div><div class="dls" id="dls"></div></div>
     <label class="sw"><input type="checkbox" id="hid"> Mode uji hafalan: tutup teks, ketuk ayat untuk mengintip</label>
   </div>
   <div id="msg"></div>
@@ -164,8 +165,10 @@ var QARI=[["Mishary Alafasy","ar.alafasy"],["Mahmoud Al-Husary (pelan, cocok unt
 var JJ=["TK/RA","SD/MI","SMP/MTs","SMA/MA/SMK","Perguruan tinggi","Umum"];
 var $=function(i){return document.getElementById(i)};
 var A=[],cur=0,reps=0,loops=0,playing=false,cache={};
-var cfg={j:1,q:0};
+var cfg={j:1,q:0,mode:"j",sr:1};
 try{var r=localStorage.getItem("hqk");if(r)cfg=JSON.parse(r)}catch(e){}
+if(!cfg.mode)cfg.mode="j";if(!cfg.sr)cfg.sr=1;
+var SURAHLIST=[];
 function save(){try{localStorage.setItem("hqk",JSON.stringify(cfg))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function opts(a){return a.map(function(o){return '<option>'+o+'</option>'}).join("")}
@@ -175,6 +178,30 @@ $("qari").value=cfg.q;
 for(var i=1;i<=30;i++){var b=document.createElement("button");b.textContent=i;b.title=NAMA[i-1];b.dataset.j=i;$("chips").appendChild(b)}
 $("chips").onclick=function(e){var b=e.target.closest("button");if(!b)return;cfg.j=+b.dataset.j;load()};
 function chipMark(){Array.prototype.forEach.call($("chips").children,function(b){b.className=(+b.dataset.j==cfg.j)?"on":""})}
+function setMode(m){
+  cfg.mode=m;save();
+  $("mj").className=m=="j"?"on":"";$("ms").className=m=="s"?"on":"";
+  $("pjuz").style.display=m=="j"?"":"none";$("psurah").style.display=m=="s"?"":"none";
+  load();
+}
+$("mj").onclick=function(){setMode("j")};
+$("ms").onclick=function(){
+  if(!SURAHLIST.length){fillSurahSel();loadSurahList().then(function(){setMode("s")});return}
+  setMode("s");
+};
+function fillSurahSel(){
+  var h="";
+  if(!SURAHLIST.length){for(var i=1;i<=114;i++)h+='<option value="'+i+'">'+i+'. Memuat...</option>'}
+  else SURAHLIST.forEach(function(s){h+='<option value="'+s.number+'">'+s.number+'. '+esc(s.englishName)+' ('+esc(s.englishNameTranslation)+')</option>'});
+  $("surahSel").innerHTML=h;$("surahSel").value=cfg.sr;
+}
+function loadSurahList(){
+  var k="surahlist";
+  return iget(k).then(function(v){if(v&&v.length==114){SURAHLIST=v;return}
+    return get("https://api.alquran.cloud/v1/surah").then(function(d){SURAHLIST=d.data;iput(k,SURAHLIST).catch(function(){})})
+  }).then(fillSurahSel).catch(function(){$("msg").textContent="Gagal memuat daftar surah. Periksa internet."});
+}
+$("surahSel").onchange=function(){cfg.sr=+$("surahSel").value;save();load()};
 
 /* ===== Penyimpanan lokal khusus audio juz untuk offline (tidak terkait akun) ===== */
 var DB2,dling=false,CDN="https://cdn.islamic.network/quran/audio/";
@@ -182,17 +209,18 @@ function idb(){return new Promise(function(res,rej){if(DB2)return res(DB2);var r
 function iget(k){return idb().then(function(d){return new Promise(function(res){var q=d.transaction("k").objectStore("k").get(k);q.onsuccess=function(){res(q.result)};q.onerror=function(){res(null)}})}).catch(function(){return null})}
 function ihas(k){return idb().then(function(d){return new Promise(function(res){var q=d.transaction("k").objectStore("k").getKey(k);q.onsuccess=function(){res(q.result!==undefined)};q.onerror=function(){res(false)}})}).catch(function(){return false})}
 function iput(k,v){return idb().then(function(d){return new Promise(function(res,rej){var t=d.transaction("k","readwrite");t.objectStore("k").put(v,k);t.oncomplete=res;t.onerror=function(){rej(t.error)}})})}
+function curId(){return cfg.mode=="j"?("j"+cfg.j):("s"+cfg.sr)}
 function status(){
-  var j=cfg.j,ed=QARI[+$("qari").value][1];
-  iget("m|"+j+"|"+ed).then(function(m){
+  var id=curId(),ed=QARI[+$("qari").value][1];
+  iget("m|"+id+"|"+ed).then(function(m){
     if(dling)return;
-    $("dls").textContent=m?"Tersimpan. Juz ini bisa dipakai tanpa internet.":"Belum tersimpan. Simpan saat ada internet supaya bisa dipakai offline.";
-    $("dl").textContent=m?"Simpan ulang":"Simpan juz ini untuk offline";
+    $("dls").textContent=m?"Tersimpan. Bisa dipakai tanpa internet.":"Belum tersimpan. Simpan saat ada internet supaya bisa dipakai offline.";
+    $("dl").textContent=m?"Simpan ulang":"Simpan untuk offline";
   });
 }
 function dl(){
   if(dling||!A.length)return;
-  var j=cfg.j,ed=QARI[+$("qari").value][1],list=A.slice(),n=0,fail=0,tot=list.length;
+  var id=curId(),ed=QARI[+$("qari").value][1],list=A.slice(),n=0,fail=0,tot=list.length;
   dling=true;$("dl").disabled=true;$("pg").style.display="block";
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
   function tick(){$("pgi").style.width=(n/tot*100)+"%";$("dls").textContent="Menyimpan audio... "+n+" / "+tot}
@@ -207,27 +235,39 @@ function dl(){
   Promise.all([worker(),worker(),worker(),worker()]).then(function(){
     dling=false;$("dl").disabled=false;$("pg").style.display="none";
     if(fail){$("dls").textContent="Sebagian gagal disimpan ("+fail+" ayat). Periksa internet atau ruang penyimpanan, lalu tekan lagi untuk melanjutkan."}
-    else iput("m|"+j+"|"+ed,1).then(status).catch(function(){$("dls").textContent="Ruang penyimpanan penuh."})
+    else iput("m|"+id+"|"+ed,1).then(status).catch(function(){$("dls").textContent="Ruang penyimpanan penuh."})
   });
 }
 $("dl").onclick=dl;
 function get(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
 function load(){
-  var j=cfg.j;cfg.q=+$("qari").value;save();chipMark();
-  $("jt").textContent="Juz "+j+" - "+NAMA[j-1];
-  stop();$("msg").textContent="Sedang memuat juz "+j+"...";$("list").innerHTML="";
-  var tk="t"+j;
-  var pt=cache[tk]?Promise.resolve(cache[tk]):iget(tk).then(function(v){if(v)return cache[tk]=v;return get("https://api.alquran.cloud/v1/juz/"+j+"/quran-uthmani").then(function(d){var a=d.data.ayahs;iput(tk,a).catch(function(){});return cache[tk]=a})});
+  cfg.q=+$("qari").value;save();chipMark();
+  var isJ=cfg.mode=="j",id=curId();
+  stop();$("msg").textContent="Sedang memuat...";$("list").innerHTML="";$("jt").textContent="";
+  var tk="t"+id;
+  var url=isJ?("https://api.alquran.cloud/v1/juz/"+cfg.j+"/quran-uthmani"):("https://api.alquran.cloud/v1/surah/"+cfg.sr+"/quran-uthmani");
+  var pt=cache[tk]?Promise.resolve(cache[tk]):iget(tk).then(function(v){if(v)return cache[tk]=v;return get(url).then(function(d){var a=isJ?d.data.ayahs:{ayahs:d.data.ayahs,sNum:d.data.number,sName:d.data.englishName};iput(tk,a).catch(function(){});return cache[tk]=a})});
   pt.then(function(T){
-    A=T.map(function(t){
-      var x=t.text;
-      if(t.numberInSurah==1&&t.surah.number!=1&&t.surah.number!=9&&x.indexOf("\u0628\u0650\u0633\u0652\u0645\u0650")===0)x=x.split(" ").slice(4).join(" ");
-      return{n:t.numberInSurah,s:t.surah.number,sn:t.surah.englishName,x:x,g:t.number}
-    });
+    if(isJ){
+      $("jt").textContent="Juz "+cfg.j+" - "+NAMA[cfg.j-1];
+      A=T.map(function(t){
+        var x=t.text;
+        if(t.numberInSurah==1&&t.surah.number!=1&&t.surah.number!=9&&x.indexOf("\u0628\u0650\u0633\u0652\u0645\u0650")===0)x=x.split(" ").slice(4).join(" ");
+        return{n:t.numberInSurah,s:t.surah.number,sn:t.surah.englishName,x:x,g:t.number,j:t.juz}
+      });
+    } else {
+      var sName=T.sName,sNum=T.sNum;
+      $("jt").textContent="Surah "+sNum+" - "+sName;
+      A=T.ayahs.map(function(t){
+        var x=t.text;
+        if(t.numberInSurah==1&&sNum!=1&&sNum!=9&&x.indexOf("\u0628\u0650\u0633\u0652\u0645\u0650")===0)x=x.split(" ").slice(4).join(" ");
+        return{n:t.numberInSurah,s:sNum,sn:sName,x:x,g:t.number,j:t.juz}
+      });
+    }
     draw();status();loadStars();$("msg").textContent=A.length+" ayat. Ketuk satu ayat, atur 'Sampai ayat', lalu tekan Putar.";
     $("from").max=$("to").max=A.length;$("from").value=1;$("to").value=Math.min(5,A.length);cur=0;mark();
   }).catch(function(e){
-    $("msg").textContent="Juz ini belum tersimpan di perangkat. Sambungkan internet sekali untuk memuatnya, lalu tekan Simpan untuk offline. ("+e.message+")";
+    $("msg").textContent="Belum tersimpan di perangkat. Sambungkan internet sekali untuk memuatnya, lalu tekan Simpan untuk offline. ("+e.message+")";
   });
 }
 function draw(){
@@ -390,7 +430,7 @@ function finish(){
 function uploadRec(a,blob,sc){
   var fd=new FormData();
   fd.append("audio",blob,"rec"+((blob.type||"").indexOf("mp4")>=0?".m4a":".webm"));
-  fd.append("sn",a.sn);fd.append("n",a.n);fd.append("j",cfg.j);fd.append("g",a.g);
+  fd.append("sn",a.sn);fd.append("n",a.n);fd.append("j",a.j||cfg.j);fd.append("g",a.g);
   if(sc!==null)fd.append("sc",sc);
   api("/api/recordings",{method:"POST",body:fd}).then(function(){
     if(sc===null)dlg("&#127908;","Rekaman terkirim","Cek otomatis belum bisa membaca suara. Rekaman tetap terkirim ke server untuk dikoreksi ustadz.",[["Lanjut"]]);
@@ -571,7 +611,9 @@ $("sw").onclick=showLogin;
 
 bar2();
 if(!AUTH.user)showLogin();
-load();
+$("mj").className=cfg.mode=="j"?"on":"";$("ms").className=cfg.mode=="s"?"on":"";
+$("pjuz").style.display=cfg.mode=="j"?"":"none";$("psurah").style.display=cfg.mode=="s"?"":"none";
+if(cfg.mode=="s"){fillSurahSel();loadSurahList().then(load)}else{load()}
 </script>
 </body>
 </html>
